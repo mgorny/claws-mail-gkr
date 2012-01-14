@@ -18,7 +18,7 @@ static guint get_hookid;
 
 gint plugin_init(gchar **error)
 {
-	if (!check_plugin_version(MAKE_NUMERIC_VERSION(3,8,1,0),
+	if (!check_plugin_version(MAKE_NUMERIC_VERSION(3,8,0,0),
 				VERSION_NUMERIC, PLUGIN_NAME, error))
 		return -1;
 
