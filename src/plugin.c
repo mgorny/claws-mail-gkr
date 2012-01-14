@@ -5,10 +5,16 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include "gkr-if.h"
+
 #include "version.h"
 #include "plugin.h"
+#include "hooks.h"
+#include "account.h"
 
 #define PLUGIN_NAME (_("gnome-keyring"))
+
+static guint get_hookid;
 
 gint plugin_init(gchar **error)
 {
@@ -16,11 +22,13 @@ gint plugin_init(gchar **error)
 				VERSION_NUMERIC, PLUGIN_NAME, error))
 		return -1;
 
+	get_hookid = hooks_register_hook(PASSWORD_GET_HOOKLIST, &password_get_hook, NULL);
 	return 0;
 }
 
 gboolean plugin_done(void)
 {
+	hooks_unregister_hook(PASSWORD_GET_HOOKLIST, get_hookid);
 	return TRUE;
 }
 
