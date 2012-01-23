@@ -39,18 +39,28 @@ gchar *gkr_getpass(const gchar *user, const gchar *server, const gchar *proto) {
 				gnome_keyring_result_to_message(ret));
 
 	ret = gnome_keyring_find_network_password_sync(user, NULL, server, NULL,
-			proto, NULL, 0, &items);
+			NULL, NULL, 0, &items);
 	if (ret == GNOME_KEYRING_RESULT_OK) {
-		if (items && items->data) {
-			GnomeKeyringNetworkPasswordData *item = items->data;
+		GList *i;
+		int best_pass = 0;
+
+		for (i = items; i; i = g_list_next(i)) {
+			GnomeKeyringNetworkPasswordData *item = i->data;
 
 			if (item->password && *(item->password)) {
-				pass = g_strdup(item->password);
-				gnome_keyring_network_password_list_free(items);
-			}
+				int pass_qual = 1;
+				if (item->protocol && !strcmp(proto, item->protocol))
+					pass_qual++;
 
-			gnome_keyring_network_password_list_free(items);
+				if (pass_qual > best_pass) {
+					if (best_pass)
+						g_free(pass);
+					pass = g_strdup(item->password);
+					best_pass = pass_qual;
+				}
+			}
 		}
+		gnome_keyring_network_password_list_free(items);
 	} else
 		debug_print("gnome_keyring_find_network_password_sync() failed: %s\n",
 				gnome_keyring_result_to_message(ret));
