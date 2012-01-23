@@ -16,6 +16,17 @@
 
 static guint get_hookid;
 
+static gboolean password_get_hook(gpointer source, gpointer hook_data) {
+	PasswordRequest *req = source;
+
+	/* gkr wants (user, domain, server, object, protocol, authtype, port) */
+	g_print("password_get_hook() called.\n");
+	g_print("user: %s, domain: %s, proto: %s\n", req->user,
+			req->server, req->protocol);
+
+	return FALSE;
+}
+
 gint plugin_init(gchar **error)
 {
 	if (!check_plugin_version(MAKE_NUMERIC_VERSION(3,8,0,0),
