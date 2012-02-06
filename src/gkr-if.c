@@ -9,7 +9,9 @@
 #include "common/utils.h"
 #include "gtk/inputdialog.h"
 
-gchar *gkr_getpass(const gchar *user, const gchar *server, const gchar *proto) {
+gchar *gkr_getpass(const gchar *user, const gchar *server, const gchar *proto,
+		guint16 port)
+{
 	GnomeKeyringResult ret;
 	GList *items;
 	GnomeKeyringInfo *gki;
@@ -48,9 +50,16 @@ gchar *gkr_getpass(const gchar *user, const gchar *server, const gchar *proto) {
 			GnomeKeyringNetworkPasswordData *item = i->data;
 
 			if (item->password && *(item->password)) {
-				int pass_qual = 1;
+				enum {
+					PASS_ANY = 1,
+					PASS_PROTO = 2,
+					PASS_PORT = 4
+				} pass_qual = PASS_ANY;
+
 				if (item->protocol && !strcmp(proto, item->protocol))
-					pass_qual++;
+					pass_qual |= PASS_PROTO;
+				if (item->port && port == item->port)
+					pass_qual |= PASS_PORT;
 
 				if (pass_qual > best_pass) {
 					if (best_pass)

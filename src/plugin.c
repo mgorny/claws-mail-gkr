@@ -23,10 +23,10 @@ static gboolean password_get_hook(gpointer source, gpointer hook_data) {
 
 	/* gkr wants (user, domain, server, object, protocol, authtype, port) */
 	g_print("password_get_hook() called.\n");
-	g_print("user: %s, domain: %s, proto: %s\n", req->user,
-			req->server, req->protocol);
+	g_print("user: %s, domain: %s, proto: %s, port: %d\n", req->user,
+			req->server, req->protocol, req->port);
 
-	pass = gkr_getpass(req->user, req->server, req->protocol);
+	pass = gkr_getpass(req->user, req->server, req->protocol, req->port);
 	if (pass) {
 		req->password = pass;
 		return TRUE;
