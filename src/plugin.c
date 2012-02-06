@@ -68,7 +68,7 @@ const gchar *plugin_type(void)
 
 const gchar *plugin_licence(void)
 {
-	return "BSD";
+	return "2-clause BSD";
 }
 
 const gchar *plugin_version(void)
